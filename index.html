@@ -47,6 +47,7 @@ body{
   border:none;
   padding:10px 16px;
   border-radius:999px;
+  cursor:pointer;
 }
 .subtle:active{transform:scale(0.95);}
 
@@ -71,6 +72,7 @@ body{
   transform:scale(1.03);
 }
 
+/* floating images */
 .float-img{
   position:absolute;
   width:60px;
@@ -82,6 +84,7 @@ body{
   50%{transform:translateY(-15px);}
 }
 
+/* sunflower rain */
 .sun{
   position:absolute;
   font-size:1.6rem;
@@ -99,6 +102,7 @@ body{
   margin-top:20px;
 }
 
+/* punch box */
 #punchBox{
   width:140px;
   height:140px;
@@ -141,21 +145,22 @@ body{
 
 <body>
 
-<img src="images/img1.png" class="float-img" style="top:10%;left:10%">
-<img src="images/img2.png" class="float-img" style="top:70%;left:80%">
-<img src="images/img3.png" class="float-img" style="top:40%;left:75%">
-<img src="images/img4.png" class="float-img" style="top:20%;left:60%">
-<img src="images/img5.png" class="float-img" style="top:80%;left:20%">
+<!-- floating images -->
+<img src="img1.png" class="float-img" style="top:10%;left:10%">
+<img src="img2.png" class="float-img" style="top:70%;left:80%">
+<img src="img3.png" class="float-img" style="top:40%;left:75%">
+<img src="img4.png" class="float-img" style="top:20%;left:60%">
+<img src="img5.png" class="float-img" style="top:80%;left:20%">
 
 <div id="app" class="center"></div>
 
 <script>
 const app=document.getElementById("app");
-
 let state={hugs:0,punches:0,music:0};
 
+/* render */
 function render(content){
-  document.body.onclick=null; // reset clicks
+  document.body.onclick=null; // important fix
   app.innerHTML=`<div class="fade">${content}</div>`;
   requestAnimationFrame(()=>document.querySelector(".fade").classList.add("show"));
 }
@@ -167,9 +172,10 @@ function smooth(next){
   setTimeout(next,350);
 }
 
+/* intro */
 const intro=[
 "Hey Richa… heard today’s been a bit rough.",
-"Yeah… I get that. Some days just feel heavier than they should."
+"Yeah… some days just feel heavier than they should."
 ];
 
 let i=0;
@@ -183,6 +189,7 @@ function showIntro(){
   },2200+(current.length*25));
 }
 
+/* typing */
 const msg=`I know today might not be your day.
 
 But I just wanted to remind you
@@ -202,40 +209,18 @@ function showType(){
     if(idx<words.length){
       el.innerHTML+=words[idx]+" ";
       idx++;
-      setTimeout(type,180);
+      setTimeout(type,170);
     }else{
-      setTimeout(()=>{
-        sunflower();
-        setTimeout(showAdaptiveEnding,1400);
-        setTimeout(showContinue,2200);
-      },600);
+      sunflower();
+      setTimeout(showContinue,2000);
     }
   }
   type();
 }
 
-function showAdaptiveEnding(){
-  let text="take your time… no rush";
-  if(state.punches>12) text="hey… you don’t have to carry all that at once";
-  else if(state.hugs>=4) text="you’re allowed to be held like this for a while";
-  else if(state.music>=3) text="maybe just stay here a little longer";
-
-  const line=document.createElement("div");
-  line.innerText=text;
-  line.style.position="fixed";
-  line.style.bottom="20px";
-  line.style.left="50%";
-  line.style.transform="translateX(-50%)";
-  line.style.opacity="0";
-  line.style.transition="1.5s";
-  document.body.appendChild(line);
-  setTimeout(()=>line.style.opacity="0.7",200);
-}
-
+/* sunflower effect */
 function sunflower(){
-  for(let i=0;i<35;i++) spawnSun();
-  const interval=setInterval(()=>spawnSun(),120);
-  setTimeout(()=>clearInterval(interval),3500);
+  for(let i=0;i<30;i++) spawnSun();
 }
 
 function spawnSun(){
@@ -243,12 +228,12 @@ function spawnSun(){
   s.className="sun";
   s.innerText="🌻";
   s.style.left=Math.random()*100+"vw";
-  s.style.top="-10vh";
-  s.style.animationDuration=(4+Math.random()*3)+"s";
+  s.style.animationDuration=(4+Math.random()*2)+"s";
   document.body.appendChild(s);
-  setTimeout(()=>s.remove(),7000);
+  setTimeout(()=>s.remove(),6000);
 }
 
+/* continue */
 function showContinue(){
   const b=document.createElement("button");
   b.className="subtle";
@@ -257,36 +242,32 @@ function showContinue(){
   app.appendChild(b);
 }
 
+/* menu */
 function showMenu(){
   render(`
   <div class="menu">
     <button onclick="smooth(music)">🎵 music</button>
-    <button onclick="smooth(hugs)">🤗 hugs</button>
+    <button onclick="smooth(hugs)">🫂 hugs</button>
     <button onclick="smooth(flowers)">🌼 soft things</button>
     <button onclick="smooth(punch)">👊 punch</button>
   </div>`);
 }
 
-/* MEDIA ARRAYS */
-const hugsArr=[
-  "hugs/hug1.gif","hugs/hug2.gif","hugs/hug3.gif"
-];
+/* assets */
+const hugsArr=["hug1.gif","hug2.gif","hug3.gif","hug4.gif"];
+const flowerImgs=["flower1.png","flower2.png","flower3.png","flower4.png"];
 
-const flowerImgs=[
-  "flowers/flower1.png","flowers/flower2.png","flowers/flower3.png"
-];
-
-/* FEATURES */
+/* features */
 function music(){
   state.music++;
-  render(`<div class="text"> Good music can cheer you up 🎶</div>
+  render(`<div class="text">your custom music will go here 🎶</div>
   <button class="subtle" onclick="smooth(showMenu)">back</button>`);
 }
 
 function hugs(){
   state.hugs++;
   const gif=hugsArr[Math.floor(Math.random()*hugsArr.length)];
-  render(`<div class="text">come here 🤗 </div>
+  render(`<div class="text">come here 🫂</div>
   <img src="${gif}" class="hug-img">
   <button class="subtle" onclick="smooth(showMenu)">back</button>`);
 }
@@ -303,17 +284,24 @@ function flowers(){
     f.style.left=e.clientX+"px";
     f.style.top=e.clientY+"px";
     f.style.transform="translate(-50%,-50%)";
-    f.style.transition="2s";
     document.body.appendChild(f);
+
     setTimeout(()=>{
       f.style.transform="translate(-50%,-120px)";
       f.style.opacity="0";
     },50);
+
     setTimeout(()=>f.remove(),2000);
   };
 }
 
-const ghostTexts=[ "yeah… let it out","it’s okay, I got you","breathe… you’re okay","go on, I’m listening","ugh, same honestly","excuse me?? absolutely not","that deserved a punch" ];
+/* punch */
+const ghostTexts=[
+"yeah… let it out",
+"it’s okay, I got you",
+"breathe… you’re okay",
+"go on, I’m listening"
+];
 
 function punch(){
   render(`<div class="text">go on… let it out 👊</div>
@@ -323,21 +311,10 @@ function punch(){
 
   let c=0;
   const box=document.getElementById("punchBox");
-  let lastClick=0,combo=0;
 
   box.addEventListener("pointerdown",()=>{
-    const now=Date.now(),delta=now-lastClick;
-    lastClick=now;
-    combo=delta<300?combo+1:1;
-
     c++; state.punches++;
     document.getElementById("count").innerText=c;
-
-    const intensity=Math.min(Math.max(1,300/Math.max(delta,1))+combo/2,10);
-
-    box.style.transform=`scale(${1+intensity*0.05})`;
-    box.style.background=`hsl(${45-intensity*3},90%,${75-intensity*3}%)`;
-    setTimeout(()=>box.style.transform="scale(1)",100);
 
     const rect=box.getBoundingClientRect();
     const g=document.createElement("div");
@@ -346,15 +323,17 @@ function punch(){
 
     g.style.left=rect.left+rect.width/2+"px";
     g.style.top=rect.top+rect.height/2+"px";
-    g.style.setProperty('--x',(Math.random()*120-60)+'px');
-    g.style.setProperty('--y',(Math.random()*-120)+'px');
+    g.style.setProperty('--x',(Math.random()*100-50)+'px');
+    g.style.setProperty('--y',(Math.random()*-100)+'px');
 
     document.body.appendChild(g);
     setTimeout(()=>g.remove(),1400);
   });
 }
 
+/* start */
 showIntro();
 </script>
+
 </body>
 </html>
